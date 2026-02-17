@@ -183,7 +183,7 @@ func configureServerParams(proxy *Proxy, config *Config) {
 	proxy.certRefreshDelayAfterFailure = time.Duration(10 * time.Second)
 	proxy.certIgnoreTimestamp = config.CertIgnoreTimestamp
 	proxy.ephemeralKeys = config.EphemeralKeys
-	proxy.monitoringUI = config.MonitoringUI
+	proxy.ephemeralKeys = config.EphemeralKeys
 }
 
 // configureLoadBalancing - Configures load balancing strategy

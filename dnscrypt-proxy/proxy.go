@@ -20,26 +20,25 @@ import (
 )
 
 type Proxy struct {
-	pluginsGlobals                PluginsGlobals
-	serversInfo                   ServersInfo
-	questionSizeEstimator         QuestionSizeEstimator
-	registeredServers             []RegisteredServer
-	dns64Resolvers                []string
-	dns64Prefixes                 []string
-	serversBlockingFragments      []string
-	ednsClientSubnets             []*net.IPNet
-	queryLogIgnoredQtypes         []string
-	localDoHListeners             []*net.TCPListener
-	queryMeta                     []string
-	enableHotReload               bool
-	udpListeners                  []*net.UDPConn
-	sources                       []*Source
-	tcpListeners                  []*net.TCPListener
-	registeredRelays              []RegisteredServer
-	listenAddresses               []string
-	localDoHListenAddresses       []string
-	monitoringUI                  MonitoringUIConfig
-	monitoringInstance            *MonitoringUI
+	pluginsGlobals           PluginsGlobals
+	serversInfo              ServersInfo
+	questionSizeEstimator    QuestionSizeEstimator
+	registeredServers        []RegisteredServer
+	dns64Resolvers           []string
+	dns64Prefixes            []string
+	serversBlockingFragments []string
+	ednsClientSubnets        []*net.IPNet
+	queryLogIgnoredQtypes    []string
+	localDoHListeners        []*net.TCPListener
+	queryMeta                []string
+	enableHotReload          bool
+	udpListeners             []*net.UDPConn
+	sources                  []*Source
+	tcpListeners             []*net.TCPListener
+	registeredRelays         []RegisteredServer
+	listenAddresses          []string
+	localDoHListenAddresses  []string
+
 	xTransport                    *XTransport
 	allWeeklyRanges               *map[string]WeeklyRanges
 	routes                        *map[string][]string
@@ -265,22 +264,6 @@ func (proxy *Proxy) StartProxy() {
 		dlog.Fatal(err)
 	}
 	curve25519.ScalarBaseMult(&proxy.proxyPublicKey, &proxy.proxySecretKey)
-
-	// Initialize and start the monitoring UI if enabled
-	if proxy.monitoringUI.Enabled {
-		dlog.Noticef("Initializing monitoring UI")
-		proxy.monitoringInstance = NewMonitoringUI(proxy)
-		if proxy.monitoringInstance == nil {
-			dlog.Errorf("Failed to create monitoring UI instance")
-		} else {
-			dlog.Noticef("Starting monitoring UI")
-			if err := proxy.monitoringInstance.Start(); err != nil {
-				dlog.Errorf("Failed to start monitoring UI: %v", err)
-			} else {
-				dlog.Noticef("Monitoring UI started successfully")
-			}
-		}
-	}
 
 	proxy.startAcceptingClients()
 	if !proxy.child {
@@ -904,7 +887,6 @@ func (proxy *Proxy) processIncomingQuery(
 	pluginsState.ApplyLoggingPlugins(&proxy.pluginsGlobals)
 
 	// Update monitoring metrics
-	updateMonitoringMetrics(proxy, &pluginsState)
 
 	return response
 }
